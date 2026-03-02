@@ -11,16 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('tokenable');
-            $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
-        });
+       Schema::create('personal_access_tokens', function (Blueprint $table) {
+        $table->id();
+        // Ganti morphs dengan ini:
+        $table->string('tokenable_type');
+        $table->string('tokenable_id'); 
+        
+        $table->string('name'); // Gunakan string saja jika tidak terlalu panjang
+        $table->string('token', 64)->unique();
+        $table->text('abilities')->nullable();
+        $table->timestamp('last_used_at')->nullable();
+        $table->timestamp('expires_at')->nullable();
+        $table->timestamps();
+        
+        // Indeks di MongoDB sebaiknya didefinisikan terpisah jika method chain error
+        $table->index('expires_at');
+    });
     }
 
     /**
